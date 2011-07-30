@@ -1,0 +1,53 @@
+HTTP/1.1 200 OK
+Date: Fri, 29 Jul 2011 17:42:24 GMT
+Server: Apache
+X-Powered-By: PHP/5.2.11
+Content-Length: 988
+Connection: close
+Content-Type: text/xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<methodResponse>
+<params>
+<param>
+<value><struct>
+<member><name>zoneId</name>
+<value><int>55</int></value>
+</member>
+<member><name>publisherId</name>
+<value><int>6</int></value>
+</member>
+<member><name>zoneName</name>
+<value><string>Telegraph ATW</string></value>
+</member>
+<member><name>type</name>
+<value><int>0</int></value>
+</member>
+<member><name>width</name>
+<value><int>150</int></value>
+</member>
+<member><name>height</name>
+<value><int>150</int></value>
+</member>
+<member><name>capping</name>
+<value><int>0</int></value>
+</member>
+<member><name>sessionCapping</name>
+<value><int>0</int></value>
+</member>
+<member><name>block</name>
+<value><int>0</int></value>
+</member>
+<member><name>comments</name>
+<value><string></string></value>
+</member>
+<member><name>append</name>
+<value><string></string></value>
+</member>
+<member><name>prepend</name>
+<value><string></string></value>
+</member>
+</struct></value>
+</param>
+</params>
+</methodResponse>
