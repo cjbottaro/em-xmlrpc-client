@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Em::Xmlrpc::Client::VERSION
   s.authors     = ["Christopher J. Bottaro"]
   s.email       = ["cjbottaro@alumni.cs.utexas.edu"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/cjbottaro/em-xmlrpc-client"
   s.summary     = %q{Evented and fibered XMLRPC Client}
   s.description = %q{Monkey patches Ruby's standard XMLRPC Client to use EventMachine and fibers}
 
