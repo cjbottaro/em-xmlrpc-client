@@ -1,3 +1,4 @@
+require "em-xmlrpc-client/version"
 require "xmlrpc/client"
 
 module XMLRPC

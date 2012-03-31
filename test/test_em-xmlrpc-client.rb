@@ -32,4 +32,5 @@ class TestEmXmlrpcClient < Test::Unit::TestCase
     actual = client.call("ox.getZone", "phpads4e32f100507466.86347358", 54)
     assert_equal expected, actual
   end
+
 end
