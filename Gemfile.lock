@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    em-xmlrpc-client (1.0.0)
+    em-xmlrpc-client (1.0.1)
 
 GEM
   remote: http://rubygems.org/
