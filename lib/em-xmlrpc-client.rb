@@ -128,7 +128,7 @@ module XMLRPC
       conn_opts = @connection_options || {}
       conn_opts[:ssl] = @ssl_options if @ssl_options
 
-      http = EM::HttpRequest.new("http://#{@host}:#{@port}#{@path}", conn_opts).post :body => request, :timeout => @timeout
+      http = EM::HttpRequest.new("http://#{@host}:#{@port}#{@path}", conn_opts).post :body => request, :head => header, :timeout => @timeout
       http.callback{ fiber.resume }
       http.errback do
         # Unfortunately, we can't determine exactly what the error is using EventMachine < 1.0.
