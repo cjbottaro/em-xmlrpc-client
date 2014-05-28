@@ -4,9 +4,11 @@ require "xmlrpc/client"
 module XMLRPC
   class Client
 
+    attr_accessor :connection_options
+    attr_accessor :ssl_options
+
     def initialize(host=nil, path=nil, port=nil, proxy_host=nil, proxy_port=nil,
                    user=nil, password=nil, use_ssl=nil, timeout=nil)
-
       @http_header_extra = nil
       @http_last_response = nil
       @cookie = nil
@@ -17,7 +19,10 @@ module XMLRPC
       @proxy_port = proxy_port
       @proxy_host ||= 'localhost' if @proxy_port != nil
       @proxy_port ||= 8080 if @proxy_host != nil
+
       @use_ssl    = use_ssl || false
+      @ssl_options = {}
+
       @timeout    = timeout || 30
 
       if use_ssl
@@ -39,13 +44,6 @@ module XMLRPC
         require "em-http"
         require "ostruct"
         require "fiber"
-      else
-        # HTTP object for synchronous calls
-        Net::HTTP.version_1_2
-        @http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port)
-        @http.use_ssl = @use_ssl if @use_ssl
-        @http.read_timeout = @timeout
-        @http.open_timeout = @timeout
       end
 
       @parser = nil
@@ -124,8 +122,13 @@ module XMLRPC
     end
 
     def do_rpc_em_http(async, request, header)
+      #puts ">>> EM_RPC request: #{request}"
       fiber = Fiber.current
-      http = EM::HttpRequest.new("http://#{@host}:#{@port}#{@path}").post :body => request, :timeout => @timeout
+
+      conn_opts = @connection_options || {}
+      conn_opts[:ssl] = @ssl_options if @ssl_options
+
+      http = EM::HttpRequest.new("http://#{@host}:#{@port}#{@path}", conn_opts).post :body => request, :timeout => @timeout
       http.callback{ fiber.resume }
       http.errback do
         # Unfortunately, we can't determine exactly what the error is using EventMachine < 1.0.
@@ -153,7 +156,7 @@ module XMLRPC
         value = header[name]
         value and [value].flatten
       end
-      
+
       resp
     end
 
@@ -164,7 +167,7 @@ module XMLRPC
         # use a new HTTP object for each call
         Net::HTTP.version_1_2
         http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port)
-        http.use_ssl = @use_ssl if @use_ssl
+        set_ssl_context(http)
         http.read_timeout = @timeout
         http.open_timeout = @timeout
 
@@ -173,6 +176,14 @@ module XMLRPC
           resp = http.post2(@path, request, header)
         }
       else
+        unless @http
+          Net::HTTP.version_1_2
+          @http = Net::HTTP.new(@host, @port, @proxy_host, @proxy_port)
+          set_ssl_context(@http)
+          @http.read_timeout = @timeout
+          @http.open_timeout = @timeout
+        end
+
         # reuse the HTTP object for each call => connection alive is possible
         # we must start connection explicitely first time so that http.request
         # does not assume that we don't want keepalive
@@ -181,9 +192,36 @@ module XMLRPC
         # post request
         resp = @http.post2(@path, request, header)
       end
-      
+
       resp
     end
-    
+
+    protected
+    def set_ssl_context(http)
+      return unless @use_ssl
+
+      http.use_ssl = true
+      [:verify_mode, :cert, :key, :ca_file].each do |k|
+        unless v = @ssl_options[k]
+          case k
+          when :verify_mode
+            if @ssl_options.key? :verify_peer
+              v = @ssl_options[:verify_peer] ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+            end
+          when :cert
+            if cert_f = @ssl_options[:cert_chain_file]
+              v = OpenSSL::X509::Certificate.new(File.read(cert_f))
+            end
+          when :key
+            if key_f = @ssl_options[:private_key_file]
+              v = OpenSSL::PKey::RSA.new(File.read(key_f))
+            end
+          end
+        end
+        #puts ">>>> #{k}: #{v}"
+        http.send("#{k}=".to_sym, v) if v
+      end
+    end
+
   end
 end
