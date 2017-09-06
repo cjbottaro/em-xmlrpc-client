@@ -29,3 +29,10 @@ Christopher J. Bottaro
 {\https://github.com/cjbottaro}[https://github.com/cjbottaro]
 
 @cjbottaro
+
+== Copyright and License
+
+Copyright (c) 2017, Christopher J. Bottaro.
+
+This project is licensed under the {MIT License}[https://github.com/cjbottaro/em-xmlrpc-client/blob/license/LICENSE.md].
+
