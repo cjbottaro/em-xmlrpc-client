@@ -18,9 +18,10 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.add_dependency "em-http-request", "~> 1.0"
+
   # specify any dependencies here; for example:
   s.add_development_dependency "eventmachine"
-  s.add_development_dependency "em-http-request"
   s.add_development_dependency "webmock"
   s.add_development_dependency "rr"
 
